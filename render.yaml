@@ -27,7 +27,7 @@ services:
       - key: APP_ENV
         value: production
       - key: FRONTEND_URL
-        value: https://tw-stock-web-thomas95.onrender.com
+        value: https://tw-stock-web-thomas95-jhj1.onrender.com
 
   # ----------------------------------------------------------------------------
   # 前端網頁服務 (React Static Site)
@@ -42,7 +42,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://tw-stock-api-thomas95.onrender.com/api/*
+        destination: https://tw-stock-api-thomas95-jhj1.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
