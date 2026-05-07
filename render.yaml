@@ -24,8 +24,6 @@ services:
       - key: APP_ENV
         value: production
       - key: FRONTEND_URL
-        # 修改為手動填寫或預設值，避免 Blueprint 報錯
-        sync: false
         value: https://stock-backtest-frontend.onrender.com
 
   # ----------------------------------------------------------------------------
