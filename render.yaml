@@ -3,7 +3,7 @@ services:
   # 後端 API 服務 (FastAPI)
   # ----------------------------------------------------------------------------
   - type: web
-    name: stock-backtest-api
+    name: tw-stock-api-thomas95
     env: python
     plan: free
     region: singapore
@@ -27,13 +27,13 @@ services:
       - key: APP_ENV
         value: production
       - key: FRONTEND_URL
-        value: https://stock-backtest-frontend.onrender.com
+        value: https://tw-stock-web-thomas95.onrender.com
 
   # ----------------------------------------------------------------------------
   # 前端網頁服務 (React Static Site)
   # ----------------------------------------------------------------------------
   - type: web
-    name: stock-backtest-frontend
+    name: tw-stock-web-thomas95
     runtime: static
     # 靜態網站不接受 region 和 plan 欄位
     buildCommand: cd frontend && npm install && npm run build
@@ -42,7 +42,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://stock-backtest-api.onrender.com/api/*
+        destination: https://tw-stock-api-thomas95.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
