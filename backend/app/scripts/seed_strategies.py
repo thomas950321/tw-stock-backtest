@@ -6,6 +6,8 @@ from app.database import SessionLocal
 from app import models
 
 def seed_strategies():
+    from app.database import Base, engine
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     
     strategies = [
@@ -59,7 +61,7 @@ def seed_strategies():
         }
     ]
 
-    print("🚀 Seeding more trading strategies...")
+    print("Seeding more trading strategies...")
     inserted_count = 0
     for strat_data in strategies:
         # Check if already exists by name
@@ -75,7 +77,7 @@ def seed_strategies():
     
     db.commit()
     db.close()
-    print(f"✅ Successfully seeded {inserted_count} new strategies!")
+    print(f"Successfully seeded {inserted_count} new strategies!")
 
 if __name__ == "__main__":
     seed_strategies()

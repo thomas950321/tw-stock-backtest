@@ -9,6 +9,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 async def seed_stocks():
+    from app.database import Base, engine
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         logger.info("📅 開始抓取台股基本資訊 (FinMind)...")
@@ -16,33 +18,32 @@ async def seed_stocks():
         stock_list = await fetch_taiwan_stock_info()
         logger.info(f"API 回傳 {len(stock_list)} 筆資料")
 
-        # 2. 過濾並只保留上市 (TSE) / 上櫃 (OTC) 的「股票」(不含權證、ETF 等可視需求調整)
-        inserted = 0
+        # 2. 過濾並只保留上市 (TSE) / 上櫃 (OTC) 的「股票」
+        logger.info("正在篩選資料...")
+        existing_symbols = set(row[0] for row in db.query(models.Stock.symbol).all())
+        
+        to_add = []
         for item in stock_list:
-            # item 範例: {'industry_category': '半導體業', 'stock_id': '2330', 'stock_name': '台積電', 'type': 'twse'}
             symbol = str(item.get("stock_id", ""))
-            
-            # 簡單過濾：只抓純數字代號（台股股票代號通常是 4 碼）
             if not symbol.isdigit() or len(symbol) != 4:
                 continue
-
-            name = item.get("stock_name", "")
-            market = item.get("type", "").upper()
-            industry = item.get("industry_category", "")
-
-            # 3. 檢查是否存在
-            exists = db.query(models.Stock).filter(models.Stock.symbol == symbol).first()
-            if not exists:
-                db.add(models.Stock(
+            
+            if symbol not in existing_symbols:
+                to_add.append(models.Stock(
                     symbol=symbol,
-                    name=name,
-                    market=market,
-                    industry=industry
+                    name=item.get("stock_name", ""),
+                    market=item.get("type", "").upper(),
+                    industry=item.get("industry_category", "")
                 ))
-                inserted += 1
 
-        db.commit()
-        logger.info(f"✅ 成功寫入 {inserted} 筆新的股票基本資料")
+        # 3. 批次寫入
+        if to_add:
+            logger.info(f"正在批次寫入 {len(to_add)} 筆新資料...")
+            db.bulk_save_objects(to_add)
+            db.commit()
+            logger.info(f"✅ 成功寫入 {len(to_add)} 筆股票資料")
+        else:
+            logger.info("ℹ️ 沒有發現新資料，無需更新")
 
     except Exception as e:
         db.rollback()

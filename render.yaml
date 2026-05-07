@@ -1,0 +1,48 @@
+services:
+  # ----------------------------------------------------------------------------
+  # 後端 API 服務 (FastAPI)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: stock-backtest-api
+    env: python
+    region: singapore # 建議選擇靠近台灣的區域
+    # 指定從根目錄執行 backend 相關指令
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL # 必填，請在 Render 後台填入您的 MySQL URL
+        sync: false
+      - key: FINMIND_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: stock-backtest-frontend
+          property: url
+
+  # ----------------------------------------------------------------------------
+  # 前端網頁服務 (React Static Site)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: stock-backtest-frontend
+    env: static
+    region: singapore
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    # 設定路由轉發，將 /api 請求打向後端
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://stock-backtest-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
