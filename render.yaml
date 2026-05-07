@@ -5,7 +5,8 @@ services:
   - type: web
     name: stock-backtest-api
     env: python
-    region: singapore # 建議選擇靠近台灣的區域
+    plan: free
+    region: singapore
     # 指定從根目錄執行 backend 相關指令
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -32,6 +33,7 @@ services:
   - type: web
     name: stock-backtest-frontend
     env: static
+    plan: free
     # 移除 region，因為靜態網站是全球部署的
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
