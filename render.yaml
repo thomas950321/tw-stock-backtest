@@ -24,10 +24,9 @@ services:
       - key: APP_ENV
         value: production
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: stock-backtest-frontend
-          property: url
+        # 修改為手動填寫或預設值，避免 Blueprint 報錯
+        sync: false
+        value: https://stock-backtest-frontend.onrender.com
 
   # ----------------------------------------------------------------------------
   # 前端網頁服務 (React Static Site)
@@ -35,7 +34,7 @@ services:
   - type: web
     name: stock-backtest-frontend
     env: static
-    region: singapore
+    # 移除 region，因為靜態網站是全球部署的
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     # 設定路由轉發，將 /api 請求打向後端
