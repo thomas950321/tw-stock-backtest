@@ -30,10 +30,9 @@ services:
   # ----------------------------------------------------------------------------
   # 前端網頁服務 (React Static Site)
   # ----------------------------------------------------------------------------
-  - type: web
+  - type: static
     name: stock-backtest-frontend
     env: static
-    plan: free
     # 移除 region，因為靜態網站是全球部署的
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
