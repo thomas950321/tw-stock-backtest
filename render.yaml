@@ -30,10 +30,10 @@ services:
   # ----------------------------------------------------------------------------
   # 前端網頁服務 (React Static Site)
   # ----------------------------------------------------------------------------
-  - type: static_site
+  - type: web
     name: stock-backtest-frontend
-    env: static
-    # 移除 region，因為靜態網站是全球部署的
+    runtime: static
+    # 靜態網站不接受 region 和 plan 欄位
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
     # 設定路由轉發，將 /api 請求打向後端
