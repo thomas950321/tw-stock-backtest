@@ -12,6 +12,8 @@ services:
     startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.14
       - key: DATABASE_URL # 必填，請在 Render 後台填入您的 MySQL URL
         sync: false
       - key: FINMIND_TOKEN
