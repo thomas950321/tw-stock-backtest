@@ -42,7 +42,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://stock-backtest-api.onrender.com/api/*
+        destination: https://stock-backtest-api.onrender.com/*
       - type: rewrite
         source: /*
         destination: /index.html
